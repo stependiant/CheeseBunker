@@ -2,6 +2,8 @@ package kds.step.CheeseBunker;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,14 +30,22 @@ public class CheeseBunkerApplication {
 		JSONObject config = new JSONObject(fromConfig);
 		String token = config.getString("discordBotToken");
 
-		JDABuilder jdaBuilder = JDABuilder.createDefault(token)
+		JDA jda = JDABuilder.createDefault(token)
 				.enableIntents(
 						GatewayIntent.GUILD_MESSAGES,
 						GatewayIntent.MESSAGE_CONTENT,
 						GatewayIntent.GUILD_MEMBERS
 				)
-				.addEventListeners(new MessageListener());
+				.addEventListeners(new SlashCommandListener())
+				.build();
 
-		return jdaBuilder.build();
+		jda.updateCommands()
+				.addCommands(
+						Commands.slash("pp", "count total for PayPal")
+								.addOption(OptionType.INTEGER, "money", "how much", true),
+						Commands.slash("ticket", "Create new ticket")
+				).queue();
+
+		return jda;
 	}
 }
