@@ -3,11 +3,16 @@ package kds.step.CheeseBunker;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import javax.security.auth.login.LoginException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @SpringBootApplication
 public class CheeseBunkerApplication {
@@ -17,8 +22,11 @@ public class CheeseBunkerApplication {
 	}
 
 	@Bean
-	public JDA jda() throws LoginException {
-		String token = "DISCORD_TOKEN";
+	public JDA jda() throws LoginException, IOException, JSONException {
+
+		String fromConfig = new String(Files.readAllBytes(Paths.get("src/main/resources/config.json")));
+		JSONObject config = new JSONObject(fromConfig);
+		String token = config.getString("discordBotToken");
 
 		JDABuilder jdaBuilder = JDABuilder.createDefault(token)
 				.enableIntents(
