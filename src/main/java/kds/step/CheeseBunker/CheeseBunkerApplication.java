@@ -43,7 +43,8 @@ public class CheeseBunkerApplication {
 				.addCommands(
 						Commands.slash("pp", "count total for PayPal")
 								.addOption(OptionType.INTEGER, "money", "how much", true),
-						Commands.slash("ticket", "Create new ticket")
+						Commands.slash("ticket", "Create new ticket"),
+						Commands.slash("close", "Close the current ticket")
 				).queue();
 
 		return jda;
