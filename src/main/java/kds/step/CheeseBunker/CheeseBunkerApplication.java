@@ -37,6 +37,7 @@ public class CheeseBunkerApplication {
 						GatewayIntent.GUILD_MEMBERS
 				)
 				.addEventListeners(new SlashCommandListener())
+				.addEventListeners(new ButtonListener())
 				.build();
 
 		jda.updateCommands()
@@ -44,9 +45,12 @@ public class CheeseBunkerApplication {
 						Commands.slash("pp", "count total for PayPal")
 								.addOption(OptionType.INTEGER, "money", "how much", true),
 						Commands.slash("ticket", "Create new ticket"),
-						Commands.slash("close", "Close the current ticket")
+						Commands.slash("close", "Close the current ticket"),
+						Commands.slash("ticketroom", "Set up a room for ticket creation")
+								.addOption(OptionType.CHANNEL, "channel", "The channel where the ticket button will be sent", true)
 				).queue();
 
 		return jda;
 	}
+
 }
