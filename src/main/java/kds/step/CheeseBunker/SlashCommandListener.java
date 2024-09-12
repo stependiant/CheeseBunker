@@ -1,5 +1,6 @@
 package kds.step.CheeseBunker;
 
+import kds.step.CheeseBunker.commands.*;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.Guild;
@@ -13,24 +14,41 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class SlashCommandListener extends ListenerAdapter {
 
+    private final Map<String, Command> commandMap = new HashMap<>();
+
+    public SlashCommandListener() {
+        // registration all commands
+        commandMap.put("createticketroom", new CreateTicketButtonCommand());
+        commandMap.put("items", new ItemsCommand());
+        commandMap.put("buyitem", new BuyItemCommand());
+        commandMap.put("additem", new AddItemCommand());
+        commandMap.put("removeitem", new RemoveItemCommand());
+        commandMap.put("allmoneycheck", new AllMoneyCheckCommand());
+        commandMap.put("usermoneyadd", new UserMoneyAddCommand());
+        commandMap.put("usermoneycheck", new UserMoneyCheckCommand());
+        commandMap.put("platformmoneyadd", new PlatformMoneyAddCommand());
+        commandMap.put("platformmoneyremove", new PlatformMoneyRemoveCommand());
+        commandMap.put("platformmoneycheck", new PlatformMoneyCheckCommand());
+        commandMap.put("setup", new SetupCommand());
+
+    }
+
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+        String commandName = event.getName();
 
-        switch (event.getName()) {
-            case "pp" -> {
-                int amount = event.getOption("money").getAsInt();
-                String response = generatePayPalResponse(amount);
-                event.reply(response).queue();
-            }
-            case "ticket" -> createTicket(event);
-            case "close" -> closeTicket(event);
-            case "ticketroom" -> setupTicketRoom(event);
-            default -> event.reply("unknown command!").setEphemeral(true);
+        Command command = commandMap.get(commandName);
+        if (command != null) {
+            command.execute(event);
+        } else {
+            event.reply("Unknown command!").setEphemeral(true).queue();
         }
 
     }
